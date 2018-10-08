@@ -32,7 +32,7 @@ str(PGRaw)
 Let's convert the Dates from Factors to real Date for ease of analysis! 
 P.S: While using the function as.Date always enter the date format as in the data provided, NOT as the format in which you want.
 
-```{r factors to date}
+```{r characters to date}
 library(lubridate)
 
 ymd("20110604")
@@ -55,11 +55,14 @@ PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicApplied
 
 ```
 
-Let's check our dataframe now after conversion
+For the sak of analysis we are going to ignore the attribute "QuestionTypeResponseID". So let's remove that column from our dataframe too. Let's check our final dataframe now after all the data type conversion.
 
 ```{r checking dataframe}
+#Remove Column QuestionTypeResponseID 
+PGRaw$QuestionTypeResponseID = NULL
+
+#Check Dataframe
 str(PGRaw)
-#head(PGRaw)
 ```
 
  Yup, all the Dates Variables (such as: AdmitDateLocal, DischargeDateLocal, and RecordedDateLocal) are now converted to Date format, instead of Factors, which are used essentially for Categorical Variable.
