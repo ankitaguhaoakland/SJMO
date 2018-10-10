@@ -78,4 +78,11 @@ class(PGRaw$FIN)
 PGRaw$FIN
 ```
 
+Let's check some of the Variables, before getting started. The FIN is the Patient ID Variable which gets a Unique ID number everytime a Patient gets admitted. Therefore, for a particular FIN, the AdmitDateLocal should generate a unique date. 
+
+```{r check FIN & Admission Date}
+# Checking both the Patient Identification & Admission Date
+PGRaw %>% distinct(FIN, AdmitDateLocal)
+```
+Filtering out the FIN from the Dataframe gives us an overview that for the FIN 172000000000, there are numerous AdmitDateLocal one dated in 2015 and another one in 2016 just from the first overview page.Clearly our data needs some cleaning before we proceed for analysis. 
 
