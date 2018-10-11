@@ -5,7 +5,7 @@ date: "October 6, 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup& include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -24,13 +24,11 @@ library(tidyr)
 ```{r reading patient survey data}
 PGRaw <- read.table("PressGaneyRaw.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
-#summary(PGRaw)
-
 str(PGRaw)
 ```
 
 Let's convert the Dates from Factors to real Date for ease of analysis! 
-P.S: While using the function as.Date always enter the date format as in the data provided, NOT as the format in which you want.
+P.S: While using the function as.Date always enter the date format as in the data provided& NOT as the format in which you want.
 
 ```{r characters to date}
 library(lubridate)
@@ -65,20 +63,21 @@ PGRaw$QuestionTypeResponseID = NULL
 str(PGRaw)
 ```
 
- Yup, all the Dates Variables (such as: AdmitDateLocal, DischargeDateLocal, and RecordedDateLocal) are now converted to Date format, instead of Factors, which are used essentially for Categorical Variable.
+ Yup, all the Dates Variables (such as: AdmitDateLocal& DischargeDateLocal& and RecordedDateLocal) are now converted to Date format, instead of Factors, which are used essentially for Categorical Variable.
 
 ```{r data overview}
 head(PGRaw)
 ```
 
 Looks like our one of the major attribute "FIN" in exponential format. Let's check it's class and try to fetch and view the value when called upon. 
+
 ```{r checking class and values of FIN}
 class(PGRaw$FIN)
 
 PGRaw$FIN
 ```
 
-Let's check some of the Variables, before getting started. The FIN is the Patient ID Variable which gets a Unique ID number everytime a Patient gets admitted. Therefore, for a particular FIN, the AdmitDateLocal should generate a unique date. 
+Let's check some of the Variables before getting started. The FIN is the Patient ID Variable which gets a Unique ID number everytime a Patient gets admitted. Therefore, for a particular FIN, the AdmitDateLocal should generate a unique date. 
 
 ```{r check FIN & Admission Date}
 # Checking both the distinct Patient Identification & Admission Date
@@ -90,12 +89,28 @@ PGRaw[PGRaw$FIN == 172000000000, ]
 
 Filtering out the FIN from the Dataframe gives us an overview that for the FIN 172000000000, there are numerous AdmitDateLocal one dated in 2015 and another one in 2016 just from the first overview page. Clearly our data needs some cleaning before we proceed for analysis.
 
-Even the duplicated Patient ID with the FIN 172000000000 has 7673 rows with the same Admission Date, which is not possible in real life. 
+Even the duplicated Patient ID with the FIN 172000000000 has 7673 rows with the same Admission Date, which is not possible according to the proposition that together both the FIN and the AdmitDateLocal should be unique. 
 
 ```{r viewing non-repeatatitive FIN}
+#Shows the not duplicated FIN values 
 subset(PGRaw, !duplicated(PGRaw$FIN))
 
-#PGRaw %>% filter(FIN == 172000000000)  
+
+#Reading the non-duplicated FIN values in another dataframe
+PGUniqueFIN <- subset(PGRaw, !duplicated(PGRaw$FIN))
+View(PGUniqueFIN)
 ```
 
-Now, we have removed the duplicated FIN ID, however we still need to get read of all the FIN IDs  (with a trail of nine 0's behind) in our dataframe.
+So we have 15,217 Unique FIN ID, that means we can now at least view all those FIN that ends with nine trailing 0's.
+Now, we have removed the duplicated FIN ID, however we still need to get read of all the FIN IDs  (with a trail of nine 0's behind) in our dataframe. But a good point to note here is all the other valid duplicated FIN's got wiped from my dataframe too, when we are viewing the dataframe PGUniqueFIN! However this gives us a brief of the FIN numbers with the trailing nine 0's that we need to get rid of our dataframe.
+
+```{r}
+# Removing all the Test FIN with trailing nine0's 
+PGRef <- PGRaw[PGRaw$FIN!=172000000000 & PGRaw$FIN!=421000000000 & PGRaw$FIN!=156000000000 & PGRaw$FIN!=174000000000 & PGRaw$FIN!=182000000000 & PGRaw$FIN!=173000000000 & PGRaw$FIN!=153000000000 & PGRaw$FIN!=178000000000 & PGRaw$FIN!=169000000000 & PGRaw$FIN!=176000000000 & PGRaw$FIN!=161000000000 & PGRaw$FIN!=155000000000 & PGRaw$FIN!=124000000000 & PGRaw$FIN!=179000000000 & PGRaw$FIN!=180000000000 & PGRaw$FIN!=158000000000 & PGRaw$FIN!=171000000000 & PGRaw$FIN!=165000000000 & PGRaw$FIN!=170000000000 & PGRaw$FIN!=157000000000 & PGRaw$FIN!=175000000000 & PGRaw$FIN!=181000000000 & PGRaw$FIN!=159000000000 & PGRaw$FIN!=150000000000 & PGRaw$FIN!=127000000000 & PGRaw$FIN!=183000000000 & PGRaw$FIN!=129000000000 & PGRaw$FIN!=152000000000 & PGRaw$FIN!=154000000000 & PGRaw$FIN!=126000000000 & PGRaw$FIN!=163000000000 & PGRaw$FIN!=121000000000 & PGRaw$FIN!=164000000000 & PGRaw$FIN!=167000000000 & PGRaw$FIN!=162000000000 & PGRaw$FIN!=177000000000 & PGRaw$FIN!=125000000000 & PGRaw$FIN!=151000000000 & PGRaw$FIN!=168000000000 & PGRaw$FIN!=118000000000 & PGRaw$FIN!=115000000000 & PGRaw$FIN!=122000000000 & PGRaw$FIN!=160000000000 & PGRaw$FIN!=166000000000 & PGRaw$FIN!=116000000000 & PGRaw$FIN!=123000000000 & PGRaw$FIN!=119000000000 & PGRaw$FIN!=110000000000 & PGRaw$FIN!=255000000000 & PGRaw$FIN!=128000000000 & PGRaw$FIN!=117000000000 & PGRaw$FIN!=267000000000 & PGRaw$FIN!=262000000000 & PGRaw$FIN!=261000000000 & PGRaw$FIN!=253000000000 & PGRaw$FIN!=258000000000 & PGRaw$FIN!=159000000000 & PGRaw$FIN!=145000000000 & PGRaw$FIN!=120000000000 & PGRaw$FIN!=114000000000 & PGRaw$FIN!=113000000000 & PGRaw$FIN!=112000000000 & PGRaw$FIN!=111000000000 & PGRaw$FIN!=103000000000 & PGRaw$FIN!=102000000000 & PGRaw$FIN!=182000000000, ]
+
+
+# Overview of al of our clean Patient Test Data
+View(PGRef)
+```
+
+Removed all the Patient Test FIN with trailing 9'0s and read into a new refined dataframe, PGRef. If we now overview the new dataframe, we would be able to see that all our redundant FIN data is removed. 
