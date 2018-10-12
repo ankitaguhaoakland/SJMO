@@ -35,13 +35,15 @@ RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`)
 RSWPData$`Nurse Unit` <- as.factor(RSWPData$`Nurse Unit`)
 
 RSWPData$`Discharge Disposition Code` <- sapply(RSWPData$`Discharge Disposition Code`, as.numeric)
+RSWPData[, 'Discharge Disposition Desc'] <- lapply(RSWPData[, 'Discharge Disposition Desc'], factor)
 
-#RSWPData$`Discharge Disposition Desc` < lapply(RSWPData$`Discharge Disposition Desc`, as.factor)
+
+#RSWPData$`Principal Diagnosis Code` <- sapply(RSWPData$`Principal Diagnosis Code`, as.numeric)
+
+RSWPData[, 'Principal Diagnosis Desc'] <- lapply(RSWPData[, 'Principal Diagnosis Desc'], factor)
 
 
-df %>% mutate_if(is.character,as.factor)
-
-RSWPData 
+RSWPData[, 'Phys Name - PHI'] <- lapply(RSWPData[, 'Phys Name - PHI'], factor)
 
 ```
 
