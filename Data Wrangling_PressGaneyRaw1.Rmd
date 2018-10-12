@@ -1,0 +1,100 @@
+---
+title: "Data Preparation_PressGaneyRaw.csv"
+author: "Ankita Guha"
+date: "October 6, 2018"
+output: html_document
+---
+
+```{r setup& include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load a few libraries we'll need:
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+#library(lubridate)
+```
+
+
+```{r reading patient survey data}
+PGRaw <- read.table("PressGaneyRaw1.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+str(PGRaw)
+```
+
+Let's convert the Dates from Factors to real Date for ease of analysis! 
+P.S: While using the function as.Date always enter the date format as in the data provided& NOT as the format in which you want.
+
+```{r characters to date}
+library(lubridate)
+
+ymd("20110604")
+
+PGRaw$AdmitDateLocal <- as.Date(mdy(PGRaw$AdmitDateLocal))
+PGRaw$DischargeDateLocal <- as.Date(mdy(PGRaw$DischargeDateLocal))
+PGRaw$RecordedDateLocal <- as.Date(mdy(PGRaw$RecordedDateLocal))
+
+
+PGRaw$SurveyCategoryID <- as.factor(PGRaw$SurveyCategoryID)
+PGRaw$DomainID <- as.factor(PGRaw$DomainID)
+PGRaw$QuestionID <- as.factor(PGRaw$QuestionID)
+PGRaw$QuestionTypeID <- as.factor(PGRaw$QuestionTypeID)
+PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicAppliedQuestionTypeResponseID)
+
+
+#PGRaw$AdmitDateLocal
+#PGRaw$DischargeDateLocal
+#PGRaw$RecordedDateLocal
+
+```
+
+For the sak of analysis we are going to ignore the attribute "QuestionTypeResponseID". So let's remove that column from our dataframe too. Let's check our final dataframe now after all the data type conversion.
+
+```{r checking dataframe}
+#Remove Column QuestionTypeResponseID 
+PGRaw$QuestionTypeResponseID = NULL
+
+#Check Dataframe
+str(PGRaw)
+```
+
+ Yup, all the Dates Variables (such as: AdmitDateLocal& DischargeDateLocal& and RecordedDateLocal) are now converted to Date format, instead of Factors, which are used essentially for Categorical Variable.
+
+```{r data overview}
+head(PGRaw)
+```
+
+Looks like our one of the major attribute "FIN" in exponential format. Let's check it's class and try to fetch and view the value when called upon. 
+
+```{r checking class and values of FIN}
+class(PGRaw$FIN)
+
+PGRaw$FIN
+```
+
+Let's check some of the Variables before getting started. The FIN is the Patient ID Variable which gets a Unique ID number everytime a Patient gets admitted. Therefore, for a particular FIN, the AdmitDateLocal should generate a unique date. 
+
+```{r check FIN & Admission Date}
+# Checking both the distinct Patient Identification & Admission Date
+PGRaw %>% distinct(FIN, AdmitDateLocal)
+
+# Checking FIN Data with a Suspicious Value
+PGRaw[PGRaw$FIN == 172120895138, ]
+```
+
+Filtering out the FIN from the Dataframe gives us an overview that for the FIN 172120895138, all the AdmitDateLocal are uniform and consistent. Just to confirm that both the FIN aong with the AdmitDateLocal is unique. One FIN might be repeated more than once which represents that the Patient has filled multiple Questionaire Survey. As long as we don't have multiple AdmitDateLocal against the same FIN, we are good to go. 
+
+```{r viewing non-repeatatitive FIN}
+#Shows the not duplicated FIN values 
+subset(PGRaw, !duplicated(PGRaw$FIN))
+
+#Count of number of total unique combination of FIN & AdmitDateLocal
+PGRaw %>% group_by(FIN, AdmitDateLocal) %>% summarize(count=n())
+```
+
+So we have 20,824 Unique FIN ID and we have around 31-32 total count of all the FIN and the AdmitDateLocal together.
