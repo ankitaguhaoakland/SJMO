@@ -1,0 +1,47 @@
+---
+title: "RSW Patient Data"
+author: "Ankita Guha"
+date: "October 12, 2018"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+#library(lubridate)
+```
+
+
+```{r}
+library("readxl")
+RSWPData <- read_excel("RSW - Patient Data.xlsx")
+
+str(RSWPData)
+```
+
+```{r}
+RSWPData$FIN <- as.numeric(RSWPData$FIN)
+RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`)
+RSWPData$`Nurse Unit` <- as.factor(RSWPData$`Nurse Unit`)
+
+RSWPData$`Discharge Disposition Code` <- sapply(RSWPData$`Discharge Disposition Code`, as.numeric)
+
+#RSWPData$`Discharge Disposition Desc` < lapply(RSWPData$`Discharge Disposition Desc`, as.factor)
+
+
+df %>% mutate_if(is.character,as.factor)
+
+RSWPData 
+
+```
+
