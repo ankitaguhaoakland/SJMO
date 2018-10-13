@@ -24,26 +24,25 @@ library(tidyr)
 
 ```{r}
 library("readxl")
-RSWPData <- read_excel("RSW - Patient Data.xlsx")
+RSWPData <- read_xlsx("RSW - Patient Data.xlsx")
 
 str(RSWPData)
 ```
 
-```{r}
+```{r converting Data Types}
+
 RSWPData$FIN <- as.numeric(RSWPData$FIN)
-RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`)
+RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`) #Else keep it in character format if not used for further analysis
+
 RSWPData$`Nurse Unit` <- as.factor(RSWPData$`Nurse Unit`)
 
 RSWPData$`Discharge Disposition Code` <- sapply(RSWPData$`Discharge Disposition Code`, as.numeric)
 RSWPData[, 'Discharge Disposition Desc'] <- lapply(RSWPData[, 'Discharge Disposition Desc'], factor)
 
-
-#RSWPData$`Principal Diagnosis Code` <- sapply(RSWPData$`Principal Diagnosis Code`, as.numeric)
-
 RSWPData[, 'Principal Diagnosis Desc'] <- lapply(RSWPData[, 'Principal Diagnosis Desc'], factor)
-
-
 RSWPData[, 'Phys Name - PHI'] <- lapply(RSWPData[, 'Phys Name - PHI'], factor)
+
+View(RSWPData)
 
 ```
 
