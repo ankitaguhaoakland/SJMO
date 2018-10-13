@@ -24,13 +24,16 @@ library(tidyr)
 
 ```{r}
 library("readxl")
-RSWPData <- read_xlsx("RSW - Patient Data.xlsx")
+RSWPData <- read_excel("RSW - Patient Data.xlsx")
 
 str(RSWPData)
 ```
 
+Let's convert our data type for ease of further analysis.
+
 ```{r converting Data Types}
 
+# Converting some Data Types for ease of analysis
 RSWPData$FIN <- as.numeric(RSWPData$FIN)
 RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`) #Else keep it in character format if not used for further analysis
 
@@ -43,6 +46,76 @@ RSWPData[, 'Principal Diagnosis Desc'] <- lapply(RSWPData[, 'Principal Diagnosis
 RSWPData[, 'Phys Name - PHI'] <- lapply(RSWPData[, 'Phys Name - PHI'], factor)
 
 View(RSWPData)
+
+```
+
+Okay, now that we have converted our data type, let's check if we have any duplicated values in FIN. FIN is the patient ID data and that should be unique across the whole column FIN. 
+
+```{r number of rows & columns in our dataframe}
+nrow(RSWPData)
+ncol(RSWPData)
+
+#Logical & Numeric Checking of Duplicated FIN 
+any(duplicated(RSWPData$FIN))
+anyDuplicated(RSWPData$FIN)
+
+```
+
+Looks like there are duplicated values in the FIN column and also we can see that the total number of duplicated FIN values are 67822! Let's now try to delete the duplicated FIN based on the last Physician Attended. 
+
+```{r}
+#duplicated(dat[,1:2])
+
+RSWPData[duplicated(RSWPData[,c(1,13)]),]
+
+#dat[duplicated(dat[,1:2]),]
+
+
+library(dplyr)
+# yourDataFrame %>%
+#     distinct(RIC, Date, .keep_all = TRUE)
+
+
+RSWPData %>%
+    distinct(FIN, `Phys Name - PHI`, .keep_all = FALSE)
+
+
+
+
+
+
+# dup <- data.frame(as.numeric(duplicated(df$var))) #creates df with binary var for duplicated rows
+# colnames(dup) <- c("dup") #renames column for simplicity
+# df2 <- cbind(df, dup) #bind to original df
+# df3 <- subset(df2, dup == 1) #subsets df using binary var for duplicated
+
+
+duplicatedFIN <- data.frame(as.numeric(duplicated(RSWPData$FIN))) #creates df with binary var for duplicated rows
+colnames(duplicatedFIN) <- c("dupFIN")  #renames column for simplicity
+RSWPDataNew <- cbind(RSWPData, duplicatedFIN) #bind to original dataframe RSWPData
+df3 <- subset(RSWPData, duplicatedFIN == 1) #subsets df using binary var for duplicated
+
+View(RSWPDataNew)
+
+
+
+RSWPDataNew  %>%
+   filter(dupFIN == 1)
+
+# filter_(flights, ~month == which_month, ~day == which_day)
+
+
+
+library(dplyr)
+
+which_dupFIN <- 1
+d4 <- filter_(RSWPDataNew, ~dupFIN == which_dupFIN)
+
+d4[, c(5:7,10:12)] = NULL
+View(d4)
+
+
+
 
 ```
 
