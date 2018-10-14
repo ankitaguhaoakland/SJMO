@@ -1,0 +1,105 @@
+---
+title: "RSW Patient Data"
+author: "Ankita Guha"
+date: "October 12, 2018"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+#library(lubridate)
+```
+
+
+```{r}
+library("readxl")
+RSWPData <- read_excel("RSW - Patient Data.xlsx")
+
+str(RSWPData)
+```
+
+Let's convert our data type for ease of further analysis.
+
+```{r converting Data Types}
+
+# Converting some Data Types for ease of analysis
+RSWPData$FIN <- as.numeric(RSWPData$FIN)
+RSWPData$`Patient Type Cd-Desc` <- as.factor(RSWPData$`Patient Type Cd-Desc`) #Else keep it in character format if not used for further analysis
+
+RSWPData$`Nurse Unit` <- as.factor(RSWPData$`Nurse Unit`)
+
+RSWPData$`Discharge Disposition Code` <- sapply(RSWPData$`Discharge Disposition Code`, as.numeric)
+RSWPData[, 'Discharge Disposition Desc'] <- lapply(RSWPData[, 'Discharge Disposition Desc'], factor)
+
+RSWPData[, 'Principal Diagnosis Desc'] <- lapply(RSWPData[, 'Principal Diagnosis Desc'], factor)
+RSWPData[, 'Phys Name - PHI'] <- lapply(RSWPData[, 'Phys Name - PHI'], factor)
+
+View(RSWPData)
+
+```
+
+Okay, now that we have converted our data type, let's check if we have any duplicated values in FIN. FIN is the patient ID data and that should be unique across the whole column FIN. 
+
+```{r number of rows & columns in our dataframe}
+nrow(RSWPData)
+ncol(RSWPData)
+
+#Logical & Numeric Checking of Duplicated FIN 
+any(duplicated(RSWPData$FIN))
+anyDuplicated(RSWPData$FIN)
+
+```
+
+Looks like there are duplicated values in the FIN column and also we can see that the total number of duplicated FIN values are 67822! Let's now try to delete the duplicated FIN based on the last Physician Attended. 
+
+## Identify & Remove Duplicated FIN
+As per the requirement of the Project, we are required to remove the duplicated FIN, except the last instance within the duplicated batch.
+
+```{r}
+#Checking some data
+library(dplyr)
+RSWPData %>%
+    distinct(FIN, `Phys Name - PHI`, .keep_all = FALSE)
+
+
+# Figures out the duplicated FIN
+duplicatedFIN <- data.frame(as.numeric(duplicated(RSWPData$FIN))) #creates df with binary var for duplicated FIN
+colnames(duplicatedFIN) <- c("dupFIN")  #renames column for simplicity
+RSWPDataNew <- cbind(RSWPData, duplicatedFIN) #bind to original dataframe RSWPData
+df3 <- subset(RSWPData, duplicatedFIN == 1) #subsets df using binary var for duplicated
+
+View(RSWPDataNew)
+
+
+# Filters duplicated FIN
+RSWPDataNew  %>%
+   filter(dupFIN == 1)
+
+which_dupFIN <- 1
+filter_(RSWPDataNew, ~dupFIN == which_dupFIN)
+
+
+#Reading into a new dataframe 
+RSWPDataFinal <- RSWPDataNew[!rev(duplicated(rev(RSWPDataNew$FIN))),]
+View(RSWPDataFinal)
+
+#Frees some memory space for us
+#rm(df3, RSPWDataNew)
+
+#Recheck if we have removed all the duplicated FIN from our new dataframe
+any(duplicated(RSWPDataFinal$FIN))
+
+```
+
+Since we got some duplicated values. Let's create a subset of our dataframe that shows which FIN have duplicated values. If the FIN has a duplicated value, it takes a value of 1, else it assigns a value of 0. So, now we can look at the dataframe, RSWPDataNew and can check which rows for FIN contains duplicated value. As per the requirement of the Project we need to remove the duplicated FIN, except for the last instance. As we can see,from our codes above our final dataframe, RSPWDataFinal, is a cleaned of duplicated FIN. 
