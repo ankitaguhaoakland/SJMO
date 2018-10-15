@@ -33,8 +33,10 @@ P.S: While using the function as.Date always enter the date format as in the dat
 ```{r characters to date}
 library(lubridate)
 
-ymd("20110604")
+ymd("20110604") 
 
+
+#Date formatted according to the raw date type
 PGRaw$AdmitDateLocal <- as.Date(mdy(PGRaw$AdmitDateLocal))
 PGRaw$DischargeDateLocal <- as.Date(mdy(PGRaw$DischargeDateLocal))
 PGRaw$RecordedDateLocal <- as.Date(mdy(PGRaw$RecordedDateLocal))
@@ -53,7 +55,7 @@ PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicApplied
 
 ```
 
-For the sak of analysis we are going to ignore the attribute "QuestionTypeResponseID". So let's remove that column from our dataframe too. Let's check our final dataframe now after all the data type conversion.
+For the sake of analysis we are going to ignore the attribute "QuestionTypeResponseID". So let's remove that column from our dataframe too. Let's check our final dataframe now after all the data type conversion.
 
 ```{r checking dataframe}
 #Remove Column QuestionTypeResponseID 
@@ -98,3 +100,43 @@ PGRaw %>% group_by(FIN, AdmitDateLocal) %>% summarize(count=n())
 ```
 
 So we have 20,824 Unique FIN ID and we have around 31-32 total count of all the FIN and the AdmitDateLocal together.
+
+```{r Adding Domain ID Text Details to Survey}
+#Creates a subset of just the Survey Questionairre from the Press Ganey Survey
+PGSurvey <- PGRaw %>% select(3, 14:18)
+
+#Loading Data for Domain from the LookUpTable
+PGDomain <- read.table("Domain.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+PGDomain$ShortText = NULL #Dropping a column for ease of analysis
+
+#Converting Data Type for ease of calculation
+PGDomain$DomainID <- as.factor(PGDomain$DomainID) 
+PGDomain$SurveyCategoryID <- as.factor(PGDomain$SurveyCategoryID)
+
+#Checking the dataframe
+head(PGSurvey)
+
+#Joining the two dataframe PGSurvey subset with the PGDomain 
+PGSurveywithDomain = join(PGSurvey, PGDomain, by=c("DomainID", "SurveyCategoryID"))
+head(PGSurveywithDomain)
+#View(PGSurveywithDomain)
+
+#Let's clear some of our memories for better data handling
+rm(PGSurvey)
+
+#Preparing Survey Details along with Textual Description As per from the LookupTable from Domain
+PGSurveyDetails <- join(x=PGRaw, y=PGSurveywithDomain, by=c("FIN", "SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "SkipLogicAppliedQuestionTypeResponseID"))
+PGSurveyRefined <- PGSurveyDetails[,c(1:15, 19, 16:18)]
+head(PGSurveyRefined)
+```
+
+
+
+
+
+
+
+
+
+
+
