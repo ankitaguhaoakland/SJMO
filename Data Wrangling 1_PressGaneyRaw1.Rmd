@@ -69,14 +69,17 @@ PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefi
 
 #Reading Question from the Look Up Table
 PGQuestion <- read.table("Question.csv", fill = TRUE, header = TRUE, quote = "\"", sep = ",", stringsAsFactors = FALSE, encoding="UTF-8") #This line helped to avoid the error EOF string. There was "\"" within the ShortText and LongText
-View(PGQuestion)
+
+
+str(PGQuestion)
+
 
 
 #Converting Data Type for ease of calculation
 PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
 PGQuestion$QuestionTypeID <- as.factor(PGQuestion$QuestionTypeID)
 PGQuestion$SurveyCategoryID <- as.factor(PGQuestion$SurveyCategoryID)
-PGQuestion$IsDefaultChoice <- as.factor(PGQuestion$IsDefaultChoice)
+PGQuestion$IsDefaultChoice <- as.factor(PGQuestion$IsDefaultChoice) #try this code again by keeping the data format as is, int
 
 
 #Removed the three columns named, "QuestionID" "AAQIVarName" and "PGVarName"
@@ -84,10 +87,19 @@ PGQuestion$IsDefaultChoice <- as.factor(PGQuestion$IsDefaultChoice)
 PGQuestion$AAQIVarName = NULL
 PGQuestion$PGVarName = NULL
 
+View(PGQuestion)
+
 
 #New Dataframe with Question Table Added
 PGSurveyRefined1 = join(PGSurveyRefined, PGQuestion, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
 PGSurveyRefined1 <- rename(PGSurveyRefined1, LongTextForQues = LongText, ShortTextForQues = ShortText)
+View(PGSurveyRefined1)
+str(PGSurveyRefined1)
+
+
+
+#rm(PGSurveyRefined)
+rm(PGQuestion)
 ```
 
 
