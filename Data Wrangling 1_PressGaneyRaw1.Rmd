@@ -85,11 +85,9 @@ PGQuestion$AAQIVarName = NULL
 PGQuestion$PGVarName = NULL
 
 
-d3 = join(PGSurveyRefined, PGQuestion, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
-head(d3)
-
-
-
+#New Dataframe with Question Table Added
+PGSurveyRefined1 = join(PGSurveyRefined, PGQuestion, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
+PGSurveyRefined1 <- rename(PGSurveyRefined1, LongTextForQues = LongText, ShortTextForQues = ShortText)
 ```
 
 
