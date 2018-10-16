@@ -1,0 +1,95 @@
+---
+title: "Data Wrangling 1_PressGaneyRaw1"
+author: "Ankita Guha"
+date: "October 15, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries we'll need:
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+#library(lubridate)
+```
+
+Reading all the dataframe for the next step of analysis
+
+```{r}
+
+#Reading our original dataframe
+PGRaw <- read.table("PGRaw 1.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+View(PGRaw)
+
+library(lubridate)
+ymd("20110604") 
+
+#Date formatted according to the raw date type
+PGRaw$X = NULL
+PGRaw$AdmitDateLocal <- as.Date(ymd(PGRaw$AdmitDateLocal))
+PGRaw$DischargeDateLocal <- as.Date(ymd(PGRaw$DischargeDateLocal))
+PGRaw$RecordedDateLocal <- as.Date(ymd(PGRaw$RecordedDateLocal))
+
+
+PGRaw$SurveyCategoryID <- as.factor(PGRaw$SurveyCategoryID)
+PGRaw$DomainID <- as.factor(PGRaw$DomainID)
+PGRaw$QuestionID <- as.factor(PGRaw$QuestionID)
+PGRaw$QuestionTypeID <- as.factor(PGRaw$QuestionTypeID)
+PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicAppliedQuestionTypeResponseID)
+
+
+#Reading Data Table
+PGSurveyRefined <- read.table("PGSurveyRefined 1.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+PGSurveyRefined <- rename(PGSurveyRefined, LongTextForDomain = LongText)
+str(PGSurveyRefined)
+
+#Converting Data Types
+PGSurveyRefined$X = NULL
+
+library(lubridate)
+ymd("20110604") 
+PGSurveyRefined$AdmitDateLocal <- as.Date(ymd(PGSurveyRefined$AdmitDateLocal))
+PGSurveyRefined$DischargeDateLocal <- as.Date(ymd(PGSurveyRefined$DischargeDateLocal))
+PGSurveyRefined$RecordedDateLocal <- as.Date(ymd(PGSurveyRefined$RecordedDateLocal))
+
+
+PGSurveyRefined$SurveyCategoryID <- as.factor(PGSurveyRefined$SurveyCategoryID)
+PGSurveyRefined$DomainID <- as.factor(PGSurveyRefined$DomainID)
+PGSurveyRefined$QuestionID <- as.factor(PGSurveyRefined$QuestionID)
+PGSurveyRefined$QuestionTypeID <- as.factor(PGSurveyRefined$QuestionTypeID)
+PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID)
+
+
+#Reading Question from the Look Up Table
+PGQuestion <- read.table("Question.csv", fill = TRUE, header = TRUE, quote = "\"", sep = ",", stringsAsFactors = FALSE, encoding="UTF-8") #This line helped to avoid the error EOF string. There was "\"" within the ShortText and LongText
+View(PGQuestion)
+
+
+#Converting Data Type for ease of calculation
+PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
+PGQuestion$QuestionTypeID <- as.factor(PGQuestion$QuestionTypeID)
+PGQuestion$SurveyCategoryID <- as.factor(PGQuestion$SurveyCategoryID)
+PGQuestion$IsDefaultChoice <- as.factor(PGQuestion$IsDefaultChoice)
+
+
+#Removed the three columns named, "QuestionID" "AAQIVarName" and "PGVarName"
+#PGQuestion$QuestionID = NULL
+PGQuestion$AAQIVarName = NULL
+PGQuestion$PGVarName = NULL
+
+
+d3 = join(PGQuestion, PGSurveyRefined, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
+head(d3)
+
+
+
+```
+
+
