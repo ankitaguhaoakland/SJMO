@@ -122,15 +122,19 @@ head(PGSurveywithDomain)
 #View(PGSurveywithDomain)
 
 #Let's clear some of our memories for better data handling
-#rm(PGSurvey)
+rm(PGSurvey)
 
 #Preparing Survey Details along with Textual Description As per from the LookupTable from Domain
 PGSurveyDetails <- join(x=PGRaw, y=PGSurveywithDomain, by=c("FIN", "SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "SkipLogicAppliedQuestionTypeResponseID"))
 PGSurveyRefined <- PGSurveyDetails[,c(1:15, 19, 16:18)]
-head(PGSurveyRefined)
 
-write.csv(PGSurveyRefined, file = "PGSurveyRefined.csv")
-write.csv(PGRaw, file = "PGRaw.csv")
+head(PGSurveyRefined)
+rm(PGSurveyDetails)
+rm(PGDomain)
+rm(PGSurvey)
+
+write.csv(PGSurveyRefined, file = "PGSurveyRefined 1.csv")
+write.csv(PGRaw, file = "PGRaw 1.csv")
 ```
 
 The dataframe that contains data that I extracted from the Domain Look Up Table, is now merged with the previous dataframe from Press Ganey Survey. PGSurveyRefined is our next data fram of interest to proceed with the next phase of data cleaning and data preparation. From the column "LongText" in our dataframe of interest we can understand that if the SurveyCategoryID is 1, and the DomainID is 8 the question is related to the Hospital Environment. Combining both the SurveyCategoryID and the DomainID we can thus understand the subject matter of the survey.
