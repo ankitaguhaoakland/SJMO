@@ -85,7 +85,7 @@ PGQuestion$AAQIVarName = NULL
 PGQuestion$PGVarName = NULL
 
 
-d3 = join(PGQuestion, PGSurveyRefined, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
+d3 = join(PGSurveyRefined, PGQuestion, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
 head(d3)
 
 
