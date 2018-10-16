@@ -17,6 +17,7 @@ library(dplyr)
 library(ggplot2)
 library(reshape2)
 library(tidyr)
+library(reader)
 #library(lubridate)
 ```
 
@@ -45,13 +46,18 @@ PGRaw$QuestionTypeID <- as.factor(PGRaw$QuestionTypeID)
 PGRaw$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGRaw$SkipLogicAppliedQuestionTypeResponseID)
 
 
+
 #Reading Data Table
 PGSurveyRefined <- read.table("PGSurveyRefined 1.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 PGSurveyRefined <- rename(PGSurveyRefined, LongTextForDomain = LongText)
-str(PGSurveyRefined)
+# str(PGSurveyRefined)
+# View(PGSurveyRefined)
 
 #Converting Data Types
 PGSurveyRefined$X = NULL
+PGSurveyRefined$CAHPSID = NULL
+PGSurveyRefined$HospitalNumber = NULL
+PGSurveyRefined$Location = NULL
 
 library(lubridate)
 ymd("20110604") 
@@ -66,40 +72,99 @@ PGSurveyRefined$QuestionID <- as.factor(PGSurveyRefined$QuestionID)
 PGSurveyRefined$QuestionTypeID <- as.factor(PGSurveyRefined$QuestionTypeID)
 PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID)
 
+View(PGSurveyRefined)
+
+PGSurveyRefined$QuestionTypeID == 8
 
 #Reading Question from the Look Up Table
 PGQuestion <- read.table("Question.csv", fill = TRUE, header = TRUE, quote = "\"", sep = ",", stringsAsFactors = FALSE, encoding="UTF-8") #This line helped to avoid the error EOF string. There was "\"" within the ShortText and LongText
 
+rm(PGRaw)
 
-str(PGQuestion)
+#Check how many rows we have in PGQuestion with QuestionTypeID as 7
+# PGQuestion  %>%
+#     filter(QuestionTypeID == "7")
+
+#Okay, so looks like we just have 2 rows of value when QuestionTypeID is 7. Removing these two rows because in the main survey data, the variable column of QuestionTypeID with value 7 is absent. Therefore for ease of data merging it would be convinient to remove these two rows containing when the QuestionTypeID is equal to 7. 
+
+#Dropping the Rows with QuestionTypeID value 7
+PGQuestion<-PGQuestion[!(PGQuestion$QuestionTypeID=="7"),] 
+#PGQuestion$QuestionTypeID == 7
+
+#Looks like we have successfully removed the rows. Now that we have removed them we can go ahed and merge them with our dataframe of interest.
+
+
 
 
 
 #Converting Data Type for ease of calculation
-PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
+#PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
 PGQuestion$QuestionTypeID <- as.factor(PGQuestion$QuestionTypeID)
 PGQuestion$SurveyCategoryID <- as.factor(PGQuestion$SurveyCategoryID)
-PGQuestion$IsDefaultChoice <- as.factor(PGQuestion$IsDefaultChoice) #try this code again by keeping the data format as is, int
+#PGQuestion$IsDefaultChoice=as.factor(PGQuestion$IsDefaultChoice) #Seems like the df is not taking the previous format to convert int to factor, hence used this one
 
 
 #Removed the three columns named, "QuestionID" "AAQIVarName" and "PGVarName"
-#PGQuestion$QuestionID = NULL
+PGQuestion$QuestionID = NULL
 PGQuestion$AAQIVarName = NULL
 PGQuestion$PGVarName = NULL
 
 View(PGQuestion)
 
+#typeof(PGQuestion$IsDefaultChoice) #smaller subset of data. Type is more specific & fundamental
+#class(PGQuestion$IsDefaultChoice) #bigger subset of data. Class is more general
+
+#str(PGQuestion)
+
+rm(PGRaw)
+
+#Write to csv File for use in another RMD
+write.csv(PGQuestion, file = "PGQuestion.csv")
+write.csv(PGSurveyRefined, file = "PGSurveyRefined.csv")
+
+#eset <- justRMA()
+
+
 
 #New Dataframe with Question Table Added
-PGSurveyRefined1 = join(PGSurveyRefined, PGQuestion, by=c("QuestionID", "QuestionTypeID", "SurveyCategoryID"))
-PGSurveyRefined1 <- rename(PGSurveyRefined1, LongTextForQues = LongText, ShortTextForQues = ShortText)
-View(PGSurveyRefined1)
-str(PGSurveyRefined1)
+PGSurveyRefined1 = join(PGSurveyRefined, PGQuestion, by=c("QuestionTypeID", "SurveyCategoryID"))
+PGSurveyRefined1 <- rename(PGSurveyRefined_1, LongTextForQues = LongText, ShortTextForQues = ShortText)
 
 
 
-#rm(PGSurveyRefined)
-rm(PGQuestion)
+#str(PGSurveyRefined1)
+
+#PGSurveyRefined1$IsDefaultChoice=as.factor(PGSurveyRefined1$IsDefaultChoice)
+
+#PGSurveyRefined1$IsDefaultChoice <- as.character(PGSurveyRefined1$IsDefaultChoice)
+
+
+# View(PGSurveyRefined1)
+# 
+# unique(PGSurveyRefined1$IsDefaultChoice)
+# 
+# 
+# #rm(PGSurveyRefined)
+# rm(PGQuestion)
+# rm(d3)
+```
+
+
+```{r}
+# head(PGSurveyRefined_1)
+# PGSurveyRefined_1$X1 = NULL
+# 
+# PGSurveyRefined_1$SurveyCategoryID <- as.factor(PGSurveyRefined_1$SurveyCategoryID)
+# PGSurveyRefined_1$DomainID <- as.factor(PGSurveyRefined_1$DomainID)
+# PGSurveyRefined_1 <- rename(PGSurveyRefined_1, LongTextForDomain = LongText)
+# PGSurveyRefined_1$QuestionID <- as.factor(PGSurveyRefined_1$QuestionID)
+# PGSurveyRefined_1$QuestionTypeID <- as.factor(PGSurveyRefined_1$QuestionTypeID)
+# PGSurveyRefined_1$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefined_1$QuestionTypeID)
+```
+
+
+```{r}
+
 ```
 
 
