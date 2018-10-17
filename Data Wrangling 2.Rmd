@@ -1,0 +1,75 @@
+---
+title: "Data Wrangling 2"
+author: "Ankita Guha"
+date: "October 17, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+#library(lubridate)
+```
+
+
+```{r}
+PGSurveyDomainQuestion <- read.table("PGSurveyDomainQuestion.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+PGSurveyDomainQuestion$X = NULL
+PGSurveyDomainQuestion
+PGSurveyDomainQuestion$SurveyCategoryID <- as.factor(PGSurveyDomainQuestion$SurveyCategoryID)
+PGSurveyDomainQuestion$DomainID <- as.factor(PGSurveyDomainQuestion$DomainID)
+PGSurveyDomainQuestion$QuestionID <- as.factor(PGSurveyDomainQuestion$QuestionID)
+PGSurveyDomainQuestion$QuestionTypeID <- as.factor(PGSurveyDomainQuestion$QuestionTypeID)
+PGSurveyDomainQuestion$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyDomainQuestion$SkipLogicAppliedQuestionTypeResponseID)
+
+PGSurveyDomainQuestion %>% filter(QuestionTypeID == "11")
+```
+
+
+
+```{r}
+#PGQuestion <- read.csv("PGQuestion.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+rm(PGQuestion)
+```
+
+
+```{r}
+QuestionType <-read.csv("QuestionType.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+QuestionType$Code = NULL
+
+QuestionType$QuestionTypeID <- as.factor(QuestionType$QuestionTypeID)
+```
+
+
+```{r}
+PGSurveyDomainQuestion = join(QuestionType, PGSurveyDomainQuestion, by=c("QuestionTypeID"))
+```
+
+
+```{r}
+library(RSQLite)
+dbSource <- src_sqlite("sjmo.db")
+dbSource
+```
+
+```{r}
+QuestionTypeTab <- tbl(dbSource, "QuestionType")
+View(QuestionTypeTab)
+
+
+
+QuestionTypeResponseTab <- tbl(dbSource, "QuestionTypeResponse")
+View(QuestionTypeResponseTab)
+
+
+QuestionTypeResponseTab %>% group_by(IsTopBox)
+```
+
