@@ -23,7 +23,6 @@ library(reader)
 ```{r}
 PGSurveyDomainQuestion <- read.table("PGSurveyDomainQuestion.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 PGSurveyDomainQuestion$X = NULL
-PGSurveyDomainQuestion
 PGSurveyDomainQuestion$SurveyCategoryID <- as.factor(PGSurveyDomainQuestion$SurveyCategoryID)
 PGSurveyDomainQuestion$DomainID <- as.factor(PGSurveyDomainQuestion$DomainID)
 PGSurveyDomainQuestion$QuestionID <- as.factor(PGSurveyDomainQuestion$QuestionID)
@@ -50,7 +49,30 @@ QuestionType$QuestionTypeID <- as.factor(QuestionType$QuestionTypeID)
 
 
 ```{r}
+QuestionTypeResponse <- read.csv("QuestionTypeResponse.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+QuestionTypeResponse$X = NULL
+QuestionTypeResponse$X.1 = NULL
+QuestionTypeResponse$X.2 = NULL
+QuestionTypeResponse$QuestionTypeResponseID = NULL
+
+
+QuestionTypeResponse$QuestionTypeID <- as.factor(QuestionTypeResponse$QuestionTypeID)
+
+QuestionTypeResponse = join(QuestionType, QuestionTypeResponse, by=c("QuestionTypeID"))
+QuestionTypeResponse <- rename(QuestionTypeResponse, DescForQuesTypeID = Description)
+write.csv(QuestionTypeResponse, "QuestionTypeResponseWithDescForQuestionType.csv")
+```
+
+
+```{r}
 PGSurveyDomainQuestion = join(QuestionType, PGSurveyDomainQuestion, by=c("QuestionTypeID"))
+```
+
+
+
+
+```{r}
+
 ```
 
 
@@ -62,14 +84,24 @@ dbSource
 
 ```{r}
 QuestionTypeTab <- tbl(dbSource, "QuestionType")
-View(QuestionTypeTab)
+QuestionTypeTab$QuestionTypeID = as.factor(QuestionTypeTab$QuestionTypeID)
+QuestionTypeTab
+
+
+
+QuestionTypeTab %>%
+   select(QuestionTypeID, Description)
 
 
 
 QuestionTypeResponseTab <- tbl(dbSource, "QuestionTypeResponse")
-View(QuestionTypeResponseTab)
+QuestionTypeResponseTab
 
 
 QuestionTypeResponseTab %>% group_by(IsTopBox)
+```
+
+```{r}
+
 ```
 
