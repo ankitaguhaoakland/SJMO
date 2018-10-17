@@ -35,12 +35,6 @@ PGSurveyDomainQuestion %>% filter(QuestionTypeID == "11")
 
 
 ```{r}
-#PGQuestion <- read.csv("PGQuestion.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
-rm(PGQuestion)
-```
-
-
-```{r}
 QuestionType <-read.csv("QuestionType.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 QuestionType$Code = NULL
 
@@ -65,15 +59,10 @@ write.csv(QuestionTypeResponse, "QuestionTypeResponseWithDescForQuestionType.csv
 
 
 ```{r}
-PGSurveyDomainQuestion = join(QuestionType, PGSurveyDomainQuestion, by=c("QuestionTypeID"))
+#PGSurveyDomainQuestion = join(QuestionType, PGSurveyDomainQuestion, by=c("QuestionTypeID"))
 ```
 
 
-
-
-```{r}
-
-```
 
 
 ```{r}
