@@ -21,7 +21,7 @@ library(reader)
 #library(lubridate)
 ```
 
-Reading all the dataframe for the next step of analysis
+
 
 ```{r}
 
@@ -69,9 +69,7 @@ Reading all the dataframe for the next step of analysis
 # rm(d3)
 ```
 
-
-
-
+Reading all the dataframe for the next step of analysis:
 
 ```{r}
 #Reading Data Table
@@ -80,7 +78,7 @@ PGSurveyRefined <- rename(PGSurveyRefined, LongTextForDomain = LongText)
 # str(PGSurveyRefined)
 # View(PGSurveyRefined)
 
-#Converting Data Types
+#Clearing some of the columns for sake of analysis
 PGSurveyRefined$X = NULL
 PGSurveyRefined$CAHPSID = NULL
 PGSurveyRefined$HospitalNumber = NULL
@@ -90,24 +88,28 @@ PGSurveyRefined$AdmittingADTID = NULL
 PGSurveyRefined$AdmittingNPI = NULL
 PGSurveyRefined$AttendingADTID = NULL
 PGSurveyRefined$AttendingNPI = NULL
+PGSurveyRefined$SubLocation = NULL
 
-View(PGSurveyRefined)
+#View(PGSurveyRefined)
 
 library(lubridate)
 ymd("20110604") 
+
+#Converting to Date datatype from character
 PGSurveyRefined$AdmitDateLocal <- as.Date(ymd(PGSurveyRefined$AdmitDateLocal))
 PGSurveyRefined$DischargeDateLocal <- as.Date(ymd(PGSurveyRefined$DischargeDateLocal))
 PGSurveyRefined$RecordedDateLocal <- as.Date(ymd(PGSurveyRefined$RecordedDateLocal))
 
-
+#Converting to factor from integer
 PGSurveyRefined$SurveyCategoryID <- as.factor(PGSurveyRefined$SurveyCategoryID)
 PGSurveyRefined$DomainID <- as.factor(PGSurveyRefined$DomainID)
 PGSurveyRefined$QuestionID <- as.factor(PGSurveyRefined$QuestionID)
 PGSurveyRefined$QuestionTypeID <- as.factor(PGSurveyRefined$QuestionTypeID)
 PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefined$SkipLogicAppliedQuestionTypeResponseID)
 
-View(PGSurveyRefined)
+#View(PGSurveyRefined)
 
+#Checking the df if thereis any value for QuestionTypeID value 8
 PGSurveyRefined  %>%
     filter(QuestionTypeID == "8")
 
@@ -118,7 +120,7 @@ PGSurveyRefined  %>%
 #rm(PGRaw)
 ```
 
-
+QuestionTypeID 7 and 8 is not present in the original Press Ganey Survey. Therefore removing the same from our data frame for ease of analysis. 
 
 ```{r}
 #Reading Question from the Look Up Table
@@ -144,7 +146,7 @@ PGQuestion<-PGQuestion[!(PGQuestion$QuestionTypeID=="7"),]
 
 
 #Converting Data Type for ease of calculation
-PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
+#PGQuestion$QuestionID <- as.factor(PGQuestion$QuestionID)
 PGQuestion$QuestionTypeID <- as.factor(PGQuestion$QuestionTypeID)
 PGQuestion$SurveyCategoryID <- as.factor(PGQuestion$SurveyCategoryID)
 #PGQuestion$IsDefaultChoice=as.factor(PGQuestion$IsDefaultChoice) #Seems like the df is not taking the previous format to convert int to factor, hence used this one
@@ -157,15 +159,16 @@ PGQuestion$PGVarName = NULL
 
 
 ```{r}
-
-
-View(PGQuestion)
-
-
-
 #New Dataframe with Question Table Added
 PGSurveyRefined2 = join(PGSurveyRefined, PGQuestion, by=c("QuestionTypeID", "SurveyCategoryID"))
 PGSurveyRefined2 <- rename(PGSurveyRefined2, LongTextForQues = LongText, ShortTextForQues = ShortText)
+
+PGSurveyRefined2$AdmitDateLocal = NULL
+PGSurveyRefined2$DischargeDateLocal = NULL
+PGSurveyRefined2$RecordedDateLocal = NULL
+
+rm(PGSurveyRefined)
+rm(PGQuestion)
 
 #Write CSV File
 write.csv(PGSurveyRefined2, file = "PGSurveyDomainQuestion.csv") #Contains merged survey content from both Question and Domain
