@@ -100,5 +100,40 @@ DQT <- subset(DQT, select = c(1:4,6,5,8,7,9:11))
 ```
 
 
+# Reading the PressGaneyRaw1.csv 
+```{r}
+PressGaneyRaw1T <- read.csv("PressGaneyRaw1.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+PressGaneyRaw1T$CAHPSID = NULL
+PressGaneyRaw1T$SurveyId = NULL
+PressGaneyRaw1T$HospitalNumber = NULL
+PressGaneyRaw1T$Location = NULL
+PressGaneyRaw1T$AdmittingADTID = NULL
+PressGaneyRaw1T$AdmittingNPI = NULL
+PressGaneyRaw1T$AttendingADTID = NULL
+PressGaneyRaw1T$AttendingNPI = NULL
+PressGaneyRaw1T$SkipLogicAppliedQuestionTypeResponseID = NULL
+PressGaneyRaw1T$RecordedDateLocal = NULL
 
+
+library(lubridate)
+#Date formatted according to the raw date type
+PressGaneyRaw1T$AdmitDateLocal <- as.Date(mdy(PressGaneyRaw1T$AdmitDateLocal))
+PressGaneyRaw1T$DischargeDateLocal <- as.Date(mdy(PressGaneyRaw1T$DischargeDateLocal))
+
+PressGaneyRaw1T$SurveyCategoryID <- as.factor(PressGaneyRaw1T$SurveyCategoryID)
+PressGaneyRaw1T$DomainID <- as.factor(PressGaneyRaw1T$DomainID)
+PressGaneyRaw1T$QuestionID <- as.factor(PressGaneyRaw1T$QuestionID)
+PressGaneyRaw1T$QuestionTypeID <- as.factor(PressGaneyRaw1T$QuestionTypeID)
+PressGaneyRaw1T$QuestionTypeResponseID <- as.factor(PressGaneyRaw1T$QuestionTypeResponseID)
+
+rm(QTRDT)
+
+```
+
+#DQT + PressGaneyRaw1T in PressGaneyRaw1T
+
+```{r}
+#The final PressGaneyRaw1T contains the value of all the Patient Survey Data along with Response
+PressGaneyRaw1T = join(PressGaneyRaw1T, DQT, by=c("SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "QuestionTypeResponseID"))
+```
 
