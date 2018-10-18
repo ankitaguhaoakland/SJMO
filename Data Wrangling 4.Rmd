@@ -1,0 +1,58 @@
+---
+title: "Data Wrangling 4"
+author: "Ankita Guha"
+date: "October 17, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+```
+
+```{r}
+PGSurveyRefined_1$X1 = NULL
+PGSurveyRefined_1$CAHPSID = NULL
+PGSurveyRefined_1$SurveyId = NULL
+PGSurveyRefined_1$HospitalNumber = NULL
+PGSurveyRefined_1$Location = NULL
+
+PGSurveyRefined_1$SurveyCategoryID <- as.factor(PGSurveyRefined_1$SurveyCategoryID)
+PGSurveyRefined_1$DomainID <- as.factor(PGSurveyRefined_1$DomainID)
+PGSurveyRefined_1$QuestionID <- as.factor(PGSurveyRefined_1$QuestionID)
+PGSurveyRefined_1$QuestionTypeID <- as.factor(PGSurveyRefined_1$QuestionTypeID)
+PGSurveyRefined_1$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGSurveyRefined_1$SkipLogicAppliedQuestionTypeResponseID)
+
+PGSurveyRefined_1 <- rename(PGSurveyRefined_1, LongTextForDomain = LongText)
+```
+
+```{r}
+QuestionTypeResponseWithDescForQuestionType$X1 = NULL
+
+QuestionTypeResponseWithDescForQuestionType$QuestionTypeID <- as.factor(QuestionTypeResponseWithDescForQuestionType$QuestionTypeID)
+```
+
+```{r}
+PGSurveyRefined_1 = join(PGSurveyRefined_1, QuestionTypeResponseWithDescForQuestionType, by=c("QuestionTypeID"))
+
+PGSurveyRefined_1$AdmittingADTID = NULL
+PGSurveyRefined_1$AttendingADTID = NULL
+PGSurveyRefined_1$AdmittingNPI = NULL
+PGSurveyRefined_1$AttendingNPI = NULL
+
+rm(QuestionTypeResponseWithDescForQuestionType)
+```
+
+
+```{r}
+write.csv(PGSurveyRefined_1, "PGPatientSatisfaction.csv")
+```
+
