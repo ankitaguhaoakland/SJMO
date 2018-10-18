@@ -1,0 +1,104 @@
+---
+title: "Data Wrangling 5"
+author: "Ankita Guha"
+date: "October 18, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries, that we will need to explore the data:
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+```
+
+Load some of the Data:
+# Question Table
+```{r}
+QuestionT <- read.csv("Question.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+QuestionT = rename(QuestionT, ShortTextForQues = ShortText, LongTextForQues = LongText)
+
+QuestionT$AAQIVarName = NULL
+QuestionT$PGVarName = NULL
+
+QuestionT$QuestionID <- as.factor(QuestionT$QuestionID)
+QuestionT$QuestionTypeID <- as.factor(QuestionT$QuestionTypeID)
+QuestionT$SurveyCategoryID <- as.factor(QuestionT$SurveyCategoryID)
+```
+
+# Domain Table
+```{r}
+DomainT <- read.csv("Domain.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+DomainT = rename(DomainT, LongTextForDomain = LongText)
+
+DomainT$ShortText = NULL
+
+DomainT$DomainID <- as.factor(DomainT$DomainID)
+DomainT$SurveyCategoryID <- as.factor(DomainT$SurveyCategoryID)
+```
+
+#Domain + Question Table = (DQT)
+```{r}
+DQT = join(DomainT, QuestionT, by=c("SurveyCategoryID"))
+
+DQT <- subset(DQT, select = c(2,1,3,4:8))
+#PGPatientSatisfaction <- subset(PGPatientSatisfaction, select = c(1:6,8,7,9:13))
+
+rm(DomainT)
+rm(QuestionT)
+```
+
+# Question Type Table
+```{r}
+QuestionTypeT <- read.csv("QuestionType.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+QuestionTypeT = rename(QuestionTypeT, DescForQuesType = Description)
+QuestionTypeT$Code = NULL
+
+QuestionTypeT$QuestionTypeID <- as.factor(QuestionTypeT$QuestionTypeID)
+```
+
+# Question TypeResponse Table
+```{r}
+QuestionTypeRespT <- read.csv("QuestionTypeResponse.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+QuestionTypeRespT$X = NULL
+QuestionTypeRespT$X.1 = NULL
+QuestionTypeRespT$X.2 = NULL
+QuestionTypeRespT$AAQIResponseValue = NULL
+
+QuestionTypeRespT$QuestionTypeResponseID <- as.factor(QuestionTypeRespT$QuestionTypeResponseID)
+QuestionTypeRespT$QuestionTypeID <- as.factor(QuestionTypeRespT$QuestionTypeID)
+```
+
+#QuestionTypeResponseT + QuestionTypeT = (QTRDT)
+```{r}
+QTRDT = join(QuestionTypeRespT, QuestionTypeT, by=c("QuestionTypeID"))
+QTRDT$IsSkipLogicResponse = NULL
+
+QTRDT <- subset(QTRDT, select = c(1:2, 7, 3:6))
+
+rm(QuestionTypeRespT)
+rm(QuestionTypeT)
+```
+
+# DQT + QTRDT = DQT
+```{r}
+DQT = join(DQT, QTRDT, by=c("QuestionTypeID"))
+DQT$IsDefaultChoice = NULL
+DQT$LongTextForQues = NULL
+
+View(DQT)
+
+DQT <- subset(DQT, select = c(1:4,6,5,8,7,9:11))
+```
+
+
+
+
