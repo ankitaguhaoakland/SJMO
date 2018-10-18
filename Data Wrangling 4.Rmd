@@ -93,13 +93,22 @@ PGPatientSatisfaction %>% group_by(FIN) %>% distinct()
 ```
 
 ```{r}
-
+#Contains both 1 & 0 TopBox contains 2,767,654 rows
 PGPatientSatisfaction %>%
-    distinct(FIN, QuestionID, QuestionTypeID, DescForQuesTypeID, LongTextForDomain, PGResponseText, IsTopBox, .keep_all = FALSE) %>% filter(IsTopBox == 1 | 0)
+    distinct(FIN, QuestionID, QuestionTypeID, DescForQuesTypeID, LongTextForDomain, PGResponseText, IsTopBox, .keep_all = FALSE) %>% filter((IsTopBox == 1) | (IsTopBox == 0))
 
-#rm(PGPatientSatisfactionTopBox1)
+#Contains TopBox 1 contains 643,374 rows
+PGPatientSatisfaction %>%
+    distinct(FIN, QuestionID, QuestionTypeID, DescForQuesTypeID, LongTextForDomain, PGResponseText, IsTopBox, .keep_all = FALSE) %>% filter(IsTopBox == 1) 
 
-View(PGPatientSatisfactionTopBox)
+
+#Contains TopBox 0 contains 2,124,280 rows
+PGPatientSatisfaction %>%
+    distinct(FIN, QuestionID, QuestionTypeID, DescForQuesTypeID, LongTextForDomain, PGResponseText, IsTopBox, .keep_all = FALSE) %>% filter(IsTopBox == 0) 
+
+
+
+View(PGPatientSatisfaction)
 
 
 
