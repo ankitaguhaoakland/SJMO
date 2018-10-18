@@ -56,3 +56,57 @@ rm(QuestionTypeResponseWithDescForQuestionType)
 write.csv(PGSurveyRefined_1, "PGPatientSatisfaction.csv")
 ```
 
+
+Upload PGPatientSatisfaction.csv file from the Console
+```{r}
+PGPatientSatisfaction$X1 = NULL
+PGPatientSatisfaction$AdmittingNPI = NULL
+PGPatientSatisfaction$AttendingNPI = NULL
+PGPatientSatisfaction$RecordedDateLocal = NULL
+PGPatientSatisfaction$AdmitDateLocal = NULL
+PGPatientSatisfaction$DischargeDateLocal = NULL
+PGPatientSatisfaction$SubLocation = NULL
+
+
+PGPatientSatisfaction$SurveyCategoryID <- as.factor(PGPatientSatisfaction$SurveyCategoryID)
+PGPatientSatisfaction$DomainID <- as.factor(PGPatientSatisfaction$DomainID)
+PGPatientSatisfaction$QuestionTypeID <- as.factor(PGPatientSatisfaction$QuestionTypeID)
+PGPatientSatisfaction$QuestionID <- as.factor(PGPatientSatisfaction$QuestionID)
+PGPatientSatisfaction$SkipLogicAppliedQuestionTypeResponseID <- as.factor(PGPatientSatisfaction$SkipLogicAppliedQuestionTypeResponseID)
+#PGPatientSatisfaction$IsTopBox <- as.factor(PGPatientSatisfaction$IsTopBox)
+#PGPatientSatisfaction$IsTopBox <- as.integer(PGPatientSatisfaction$IsTopBox)
+
+```
+
+
+
+```{r}
+#Arranging Columns Accordingly
+PGPatientSatisfaction <- subset(PGPatientSatisfaction, select = c(1:6,8,7,9:13))
+```
+
+```{r}
+#dt %>% group_by(g) %>% unique()
+library(plyr)
+library(dplyr)
+PGPatientSatisfaction %>% group_by(FIN) %>% distinct()
+```
+
+```{r}
+
+PGPatientSatisfaction %>%
+    distinct(FIN, QuestionID, QuestionTypeID, DescForQuesTypeID, LongTextForDomain, PGResponseText, IsTopBox, .keep_all = FALSE) %>% filter(IsTopBox == 1 | 0)
+
+#rm(PGPatientSatisfactionTopBox1)
+
+View(PGPatientSatisfactionTopBox)
+
+
+
+```
+
+
+
+```{r}
+
+
