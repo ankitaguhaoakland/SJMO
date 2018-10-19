@@ -135,11 +135,14 @@ rm(QTRDT)
 ```{r}
 #The final PressGaneyRaw1T contains the value of all the Patient Survey Data along with Response
 PressGaneyRaw1T = join(PressGaneyRaw1T, DQT, by=c("SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "QuestionTypeResponseID"))
-View(PressGaneyRaw1T)
+#View(PressGaneyRaw1T)
 rm(DQT)
 
 PressGaneyRaw1T <- subset(PressGaneyRaw1T, select = c(1:6,10,7:9,11:15))
 PressGaneyRaw1T <- subset(PressGaneyRaw1T, select = c(1:7,8,11,9,12,10,13:15))
+
+write.csv(PressGaneyRaw1T, "PressGaneyRaw1T.csv")
+
 ```
 
 # PG Response value gives the indication of the Patient Survey Rating
@@ -152,7 +155,9 @@ PressGaneyRaw1T %>% filter(QuestionTypeID==1 & QuestionTypeResponseID==1)
 # 30th June 2014 - 31st Dec 2016
 
 ```{r}
-Phase1 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2014-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2016-12-31",]
+PressGaneyPhase1 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2014-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2016-12-31",]
+write.csv(PressGaneyPhase1, "PressGaneyPhase1.csv")
+#rm(Phase1)
 ```
 
 ### During IPOC
@@ -160,7 +165,9 @@ Phase1 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2014-01-01" & Press
 # 01st Jan 2017 - 31st Mar 2017
 
 ```{r}
-Phase2 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2017-03-31",]
+PressGaneyPhase2 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2017-03-31",]
+write.csv(PressGaneyPhase2, "PressGaneyPhase2.csv")
+#rm(Phase2)
 ```
 
 ### After IPOC
@@ -168,7 +175,9 @@ Phase2 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-01-01" & Press
 # 1st Apr 2017 - 2018
 
 ```{r}
-Phase3 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-04-01" & PressGaneyRaw1T$AdmitDateLocal <= "2018-10-30",]
+PressGaneyPhase3 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-04-01" & PressGaneyRaw1T$AdmitDateLocal <= "2018-10-30",]
+write.csv(PressGaneyPhase3, "PressGaneyPhase3.csv")
+#rm(Phase3)
 #View(Phase3)
 ```
 
