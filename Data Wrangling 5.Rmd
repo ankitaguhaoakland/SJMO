@@ -136,11 +136,54 @@ rm(QTRDT)
 #The final PressGaneyRaw1T contains the value of all the Patient Survey Data along with Response
 PressGaneyRaw1T = join(PressGaneyRaw1T, DQT, by=c("SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "QuestionTypeResponseID"))
 View(PressGaneyRaw1T)
-
+rm(DQT)
 ```
 
+# PG Response value gives the indication of the Patient Survey Rating
+```{r}
+PressGaneyRaw1T %>% filter(QuestionTypeID==1 & QuestionTypeResponseID==1)
+```
+### Before IPOC
+##Filter by Year, Phase 1 (Anytime Before 2017)
+# 30th June 2014 - 31st Dec 2016
 
 ```{r}
-PressGaneyRaw1T %>% filter(QuestionTypeID==2 & QuestionTypeResponseID==10)
+Phase1 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2014-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2016-12-31",]
 ```
+
+### During IPOC
+##Filter by Year, Phase 2 (Jan - Mar 2017)
+# 01st Jan 2017 - 31st Mar 2017
+
+```{r}
+Phase2 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-01-01" & PressGaneyRaw1T$AdmitDateLocal <= "2017-03-31",]
+```
+
+### After IPOC
+##Filter by Year, Phase 3 (April - Present Data)
+# 1st Apr 2017 - 2018
+
+```{r}
+Phase3 <- PressGaneyRaw1T[PressGaneyRaw1T$AdmitDateLocal >= "2017-04-01" & PressGaneyRaw1T$AdmitDateLocal <= "2018-10-30",]
+View(Phase3)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
