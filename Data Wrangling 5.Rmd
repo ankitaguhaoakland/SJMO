@@ -82,7 +82,7 @@ QuestionTypeRespT$QuestionTypeID <- as.factor(QuestionTypeRespT$QuestionTypeID)
 QTRDT = join(QuestionTypeRespT, QuestionTypeT, by=c("QuestionTypeID"))
 QTRDT$IsSkipLogicResponse = NULL
 
-QTRDT <- subset(QTRDT, select = c(1:2, 7, 3:6))
+QTRDT <- subset(QTRDT, select = c(1:2, 6, 3:5))
 
 rm(QuestionTypeRespT)
 rm(QuestionTypeT)
@@ -135,5 +135,12 @@ rm(QTRDT)
 ```{r}
 #The final PressGaneyRaw1T contains the value of all the Patient Survey Data along with Response
 PressGaneyRaw1T = join(PressGaneyRaw1T, DQT, by=c("SurveyCategoryID", "DomainID", "QuestionID", "QuestionTypeID", "QuestionTypeResponseID"))
+View(PressGaneyRaw1T)
+
+```
+
+
+```{r}
+PressGaneyRaw1T %>% filter(QuestionTypeID==2 & QuestionTypeResponseID==10)
 ```
 
