@@ -1,0 +1,47 @@
+---
+title: "PGPhase2"
+author: "Ankita Guha"
+date: "October 19, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries, that we will need to explore the data:
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+```
+
+Load PressGaneyPhase2 Data:
+```{r}
+PGPhase2 <- read.csv("PressGaneyPhase2.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+PGPhase2$X = NULL
+
+library(lubridate)
+#Date formatted according to the raw date type
+PGPhase2$AdmitDateLocal <- as.Date(ymd(PGPhase2$AdmitDateLocal))
+PGPhase2$DischargeDateLocal <- as.Date(ymd(PGPhase2$DischargeDateLocal))
+
+PGPhase2$SurveyCategoryID <- as.factor(PGPhase2$SurveyCategoryID)
+PGPhase2$DomainID <- as.factor(PGPhase2$DomainID)
+PGPhase2$QuestionID <- as.factor(PGPhase2$QuestionID)
+PGPhase2$QuestionTypeID <- as.factor(PGPhase2$QuestionTypeID)
+PGPhase2$QuestionTypeResponseID <- as.factor(PGPhase2$QuestionTypeResponseID)
+```
+
+###Check patient's response based on QuestionTypeID, QuestionTypeResponseID & DomainID
+#PG Response value gives the indication of the Patient Survey Rating
+```{r}
+PGPhase2 %>% filter(QuestionTypeID==1 & QuestionTypeResponseID==1 & DomainID==1) 
+
+```
+
