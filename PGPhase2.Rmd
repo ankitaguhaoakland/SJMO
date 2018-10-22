@@ -41,7 +41,85 @@ PGPhase2$QuestionTypeResponseID <- as.factor(PGPhase2$QuestionTypeResponseID)
 ###Check patient's response based on QuestionTypeID, QuestionTypeResponseID & DomainID
 #PG Response value gives the indication of the Patient Survey Rating
 ```{r}
-PGPhase2 %>% filter(QuestionTypeID==1 & QuestionTypeResponseID==1 & DomainID==1) 
+PGPhase2 %>% filter(QuestionTypeID==1 & QuestionTypeResponseID==2) %>% with(DomainID==1) 
 
+
+#Generates the Patient Survey Value that are already filled and removes the NA values for all the observations where the Response from patient is missing
+PGPhase2NONA <- PGPhase2 %>% filter(!is.na(PGResponseValue)) #36,868
+# PGPhase2 %>% filter(!is.na(PGResponseText)) #36,868
+# PGPhase2 %>% filter(!is.na(DomainID)) #41,269
+# PGPhase2  %>% filter(!is.na(LongTextForDomain)) #36,868
+# PGPhase2  %>% filter(!is.na(QuestionID))#49,072
+# PGPhase2  %>% filter(!is.na(QuestionTypeID))#49,072
+# PGPhase2  %>% filter(!is.na(QuestionTypeResponseID))#42,517
+#View(PGPhase2NONA)
 ```
+
+###Filtering with different Question Types
+##Discharge Information
+```{r}
+#For QuestionTypeID 1, & QuestionTypeResponseID 1, count of PGResponseValue 1 (Yes)
+PGPhase2NONA %>% filter(QuestionTypeID==1, QuestionTypeResponseID==1) 
+```
+For Discharge related Information, pertaining to the Questions:
+i) Whether Staff talked to the Patients when they left?
+ii) If the Patient got information during their hospital stay! 
+**1400** observations seems to have answered positively to these questions. 
+
+```{r}
+#For QuestionTypeID 1, QuestionTypeResponseID 2, count of PGResponseValue 2 (No)
+PGPhase2NONA %>% filter(QuestionTypeID==1, QuestionTypeResponseID==2) 
+```
+**199** have answered the Discharge Related Questions negatively. 
+
+##Overall Hospital Rating
+```{r}
+#For QuestionTypeID 2, QuestionTypeResponseID 3
+PGPhase2NONA %>% filter(QuestionTypeID==2, QuestionTypeResponseID==12) 
+```
+Looks like **196** Patients voted for the Overall Hospital Rating as 9 which is a TopBox. 
+
+```{r}
+#For QuestionTypeID 2, QuestionTypeResponseID 13
+PGPhase2NONA %>% filter(QuestionTypeID==2, QuestionTypeResponseID==13) 
+```
+**418** votes for the Overall Hospital Rating as 10, Best, which is also a TopBox.
+
+## Different Kinds of Frequency Related Questions
+```{r}
+#For QuestionTypeID 3, QuestionTypeResponseID 17
+PGPhase2NONA %>% filter(QuestionTypeID==3, QuestionTypeResponseID==17) 
+```
+**7893** Top Box answers for frequency related questions raised to this Patient Survey.
+
+## Different Kinds of Qualitative Type Questions
+```{r}
+#For QuestionTypeID 4, QuestionTypeResponseID 22
+PGPhase2NONA %>% filter(QuestionTypeID==4, QuestionTypeResponseID==22) 
+```
+**10,431** Top Box answers for all type of Qualitative answers. 
+
+## Different Kinds of Surety Type Questions
+```{r}
+#For QuestionTypeID 5, QuestionTypeResponseID 26
+PGPhase2NONA %>% filter(QuestionTypeID==5, QuestionTypeResponseID==26) 
+```
+**1005** for all the various Surety Questions Type
+
+## Different Agreement Question Type
+```{r}
+#For QuestionTypeID 6, QuestionTypeResponseID 33
+PGPhase2NONA %>% filter(QuestionTypeID==6, QuestionTypeResponseID==33) 
+```
+**820** positive response for all the various Agreement Question Type. 
+
+## Different Questions Related to for Agreement related to No Meds
+```{r}
+#For QuestionTypeID 11, QuestionTypeResponseID 38
+PGPhase2NONA %>% filter(QuestionTypeID==11, QuestionTypeResponseID==38) 
+```
+**461** positive responses for this category. 
+
+
+
 
