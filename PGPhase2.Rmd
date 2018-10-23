@@ -121,5 +121,24 @@ PGPhase2NONA %>% filter(QuestionTypeID==11, QuestionTypeResponseID==38)
 **461** positive responses for this category. 
 
 
+```{r}
+#DomainID 1, and TopBox 2015
+PGPhase2NONA %>% filter(DomainID==1, IsTopBox==1) 
+
+#DomainID 2, and TopBox 1956
+PGPhase2NONA %>% filter(DomainID==2, IsTopBox==1)
+
+#DomainID 3, and TopBox 682
+PGPhase2NONA %>% filter(DomainID==3, IsTopBox==1)
+
+#DomainID 4, and TopBox 884 
+PGPhase2NONA %>% filter(DomainID==4, IsTopBox==1)
+
+#DomainID 5, and TopBox 664
+PGPhase2NONA %>% filter(DomainID==5, IsTopBox==1)
+
+#DomainID 6 and TopBox 1400
+PGPhase2NONA %>% filter(DomainID==6, IsTopBox==1)
+```
 
 
