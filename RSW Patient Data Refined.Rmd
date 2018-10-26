@@ -103,3 +103,20 @@ any(duplicated(RSWPDataFinal$FIN))
 ```
 
 Since we got some duplicated values. Let's create a subset of our dataframe that shows which FIN have duplicated values. If the FIN has a duplicated value, it takes a value of 1, else it assigns a value of 0. So, now we can look at the dataframe, RSWPDataNew and can check which rows for FIN contains duplicated value. As per the requirement of the Project we need to remove the duplicated FIN, except for the last instance. As we can see,from our codes above our final dataframe, RSPWDataFinal, is a cleaned of duplicated FIN. 
+
+Now that we have removed all the duplicated values of Patient ID, FIN Number. Let's get rid of the last column and write the file to retain for further analysis.
+```{r}
+# Removes the checking column variable
+RSWPDataFinal$dupFIN <- NULL
+
+#Write the cleaned file for further analysis
+rm(df3)
+rm(duplicatedFIN)
+rm(RSWPData)
+rm(RSWPDataNew)
+rm(which_dupFIN)
+
+#Write file for further analysis
+write.csv(RSWPDataFinal, "RSWPDataCleaned.csv")
+```
+
