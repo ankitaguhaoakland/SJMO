@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+Let's load some of the libraries!
 
 ```{r}
 library(plyr)
@@ -20,6 +20,7 @@ library(tidyr)
 library(reader)
 ```
 
+#Reading Dataframe and changing Data Type for subsequent analysis
 ```{r}
 PressGaneyRaw <- read.csv("PressGaneyRaw1T.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 PressGaneyRaw$X = NULL
@@ -39,8 +40,7 @@ PressGaneyRaw$QuestionTypeID <- as.factor(PressGaneyRaw$QuestionTypeID)
 PressGaneyRaw$QuestionTypeResponseID <- as.factor(PressGaneyRaw$QuestionTypeResponseID)
 ```
 
-
-
+#Cleaning NA from PGResponseValue column
 ```{r}
 #Clearing all the Rows Value that has NA in the PGResponseValue
 PressGaneyRaw <- PressGaneyRaw[!is.na(PressGaneyRaw$PGResponseValue), ]
@@ -48,35 +48,41 @@ PressGaneyRaw <- PressGaneyRaw[!is.na(PressGaneyRaw$PGResponseValue), ]
 anyNA(PressGaneyRaw$PGResponseValue)
 ```
 
+Okay, so our dataframe is cleaned from any NA values. 
 
-```{r}
-#Write the cleared File for subsequent analysis
-write.csv(PressGaneyRaw, "PressGaneyRawCleaned.csv")
-```
+In our next step, we are interested to find the Top Box Response value for all the Total Number Responses recorded by individual patient that is with unique FIN Number and also then see the *count* of the Total Top Box Responses which are *Yes* and the *count* of Total Top Box Response which are *No*. 
 
+#Checking Just the FIN & the IsTopBox variable
 ```{r}
 #Review the dataframe with the columns of interest
 PressGaneyRaw %>% select(1,15)
 ```
 
-
-
+#Calculate Total Number of Response And Number of TopBox that are Yes & No
 ```{r}
 #Calculating the Total Number of Responses from each FIN number that means calculating the Total Number of Responses from each individual patients
 library(dplyr)
 PG <- PressGaneyRaw  %>% group_by(FIN) %>%
                          summarise(TotalResponse = n(), Yes = sum(IsTopBox==1), No = sum(IsTopBox==0))
 
-PG1 = join(PG, PressGaneyRaw, by=c("FIN"))
-View(PG1)
+PressGaneyRaw = join(PG, PressGaneyRaw, by=c("FIN"))
 
-PG1 <- subset(PG1, select = c(1,5:18,2:4))
+
+PressGaneyRaw <- subset(PressGaneyRaw, select = c(1,5:18,2:4))
 ```
 
 Let's verify the total number of Unique FIN or unique patient response in the overall complete survey data. 
 
+#Verification
 ```{r}
 #Checking the total number of Unique FIN
-PG1 %>% group_by(FIN) %>% summarize(count=n())
+PressGaneyRaw %>% group_by(FIN) %>% summarize(count=n())
 ```
-So, total number of unique FIN is 20623. 
+
+So, total number of unique FIN is 20,623. And the dataframe that contains the cleaned PressGaney Patient Survey Data along with the TotalResponse, count of Yes and count of No as per unique FIN is PressGaneyRaw. 
+
+```{r}
+#Write the cleared File for subsequent analysis
+write.csv(PressGaneyRaw, "PressGaneyRawCleaned.csv")
+```
+
