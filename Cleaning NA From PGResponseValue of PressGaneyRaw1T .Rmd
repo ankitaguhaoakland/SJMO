@@ -1,0 +1,55 @@
+---
+title: "Clearing NA From PressGaneyRaw1T"
+author: "Ankita Guha"
+date: "October 27, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+```
+
+```{r}
+PressGaneyRaw <- read.csv("PressGaneyRaw1T.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+PressGaneyRaw$X = NULL
+
+View(PressGaneyRaw)
+
+
+library(lubridate)
+#Date formatted according to the raw date type
+PressGaneyRaw$AdmitDateLocal <- as.Date(ymd(PressGaneyRaw$AdmitDateLocal))
+PressGaneyRaw$DischargeDateLocal <- as.Date(ymd(PressGaneyRaw$DischargeDateLocal))
+
+PressGaneyRaw$SurveyCategoryID <- as.factor(PressGaneyRaw$SurveyCategoryID)
+PressGaneyRaw$DomainID <- as.factor(PressGaneyRaw$DomainID)
+PressGaneyRaw$QuestionID <- as.factor(PressGaneyRaw$QuestionID)
+PressGaneyRaw$QuestionTypeID <- as.factor(PressGaneyRaw$QuestionTypeID)
+PressGaneyRaw$QuestionTypeResponseID <- as.factor(PressGaneyRaw$QuestionTypeResponseID)
+```
+
+
+
+```{r}
+#Clearing all the Rows Value that has NA in the PGResponseValue
+PressGaneyRaw <- PressGaneyRaw[!is.na(PressGaneyRaw$PGResponseValue), ]
+
+anyNA(PressGaneyRaw$PGResponseValue)
+```
+
+
+```{r}
+write.csv(PressGaneyRaw, "PressGaneyRawCleaned.csv")
+```
+
