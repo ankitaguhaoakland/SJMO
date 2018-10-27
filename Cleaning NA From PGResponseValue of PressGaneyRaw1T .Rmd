@@ -50,6 +50,33 @@ anyNA(PressGaneyRaw$PGResponseValue)
 
 
 ```{r}
+#Write the cleared File for subsequent analysis
 write.csv(PressGaneyRaw, "PressGaneyRawCleaned.csv")
 ```
 
+```{r}
+#Review the dataframe with the columns of interest
+PressGaneyRaw %>% select(1,15)
+```
+
+
+
+```{r}
+#Calculating the Total Number of Responses from each FIN number that means calculating the Total Number of Responses from each individual patients
+library(dplyr)
+PG <- PressGaneyRaw  %>% group_by(FIN) %>%
+                         summarise(TotalResponse = n(), Yes = sum(IsTopBox==1), No = sum(IsTopBox==0))
+
+PG1 = join(PG, PressGaneyRaw, by=c("FIN"))
+View(PG1)
+
+PG1 <- subset(PG1, select = c(1,5:18,2:4))
+```
+
+Let's verify the total number of Unique FIN or unique patient response in the overall complete survey data. 
+
+```{r}
+#Checking the total number of Unique FIN
+PG1 %>% group_by(FIN) %>% summarize(count=n())
+```
+So, total number of unique FIN is 20623. 
