@@ -1,0 +1,43 @@
+---
+title: "IPOC"
+author: "Ankita Guha"
+date: "October 27, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Let's load some of the libraries, that we will need to explore the data:
+```{r}
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(reader)
+library(readxl)
+```
+
+
+```{r}
+#Reading IPOC Excel File
+IPOC <- read_excel("PIE-IPOCData.xlsx")
+```
+
+```{r}
+#Calculate Hours since IPOC implementated and Duration of Stay for Patient
+library(lubridate)
+IPOC <- IPOC %>% 
+     mutate(Hours = ((Initiated - `Admit DT`)/3600), DurationofStay = (`Discharge DT` - `Admit DT`)/24)
+
+View(IPOC)
+
+str(IPOC)
+```
+
+```{r}
+write.csv(IPOC, "IPOC.csv")
+```
+
